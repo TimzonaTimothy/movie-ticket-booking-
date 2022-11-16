@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+<style>
+    .credit-card {
+    width: 360px;
+    height: 400px;
+    margin: 0px auto 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: 1px 2px 3px 0 rgba(0,0,0,.10);
+    
+}
+
+.form-header {
+    height: 60px;
+    padding: 20px 30px 0;
+    border-bottom: 1px solid #e1e8ee;
+}
+ 
+.form-body {
+    height: 340px;
+    padding: 30px 30px 20px;
+}
+
+.title {
+    font-size: 18px;
+    margin: 0;
+    color: #5e6977;
+}
+
+.card-number,
+.cvv-input input,
+.month select,
+.year select {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 14px;
+}
+ 
+.card-number,
+.month select,
+.year select {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 14px;
+}
+ 
+.card-number,
+.cvv-details,
+.cvv-input input,
+.month select,
+.year select {
+    opacity: .7;
+    color: #86939e;
+}
+.card-number {
+    width: 100%;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+}
+
+.month select,
+.year select {
+    width: 145px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+    background: url('caret.png') no-repeat;
+    background-position: 85% 50%;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+ 
+.month select {
+    float: left;
+}
+ 
+.year select {
+    float: right;
+}
+
+.cvv-input input {
+    float: left;
+    width: 145px;
+    padding-left: 20px;
+    border: 2px solid #e1e8ee;
+    border-radius: 6px;
+    background: #fff;
+}
+ 
+.cvv-details {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 16px;
+    float: right;
+    margin-bottom: 20px;
+}
+ 
+.cvv-details p {
+    margin-top: 6px;
+}
+
+.paypal-btn,
+.proceed-btn {
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    border-color: transparent;
+    border-radius: 6px;
+}
+ 
+.proceed-btn {
+    margin-bottom: 10px;
+    background: #7dc855;
+}
+ 
+.paypal-btn a,
+.proceed-btn a {
+    text-decoration: none;
+}
+ 
+.proceed-btn a {
+    color: #fff;
+}
+ 
+.paypal-btn a {
+    color: rgba(242, 242, 242, .7);
+}
+ 
+.paypal-btn {
+    padding-right: 95px;
+    background: url('paypal-logo.svg') no-repeat 65% 56% #009cde;
+}
+</style>
+
+
+
+
+  
+
+
+  <div class="container ">
+    <div class="p-4 m-4 ">
+        <div name="myForm" class="col-lg-6 mx-auto border border-primary p-3 ">
+
+            
+                <form method='POST'>
+                    {% csrf_token %}
+                <input type="hidden" name="quantity">
+            <div class="form-group">
+                <label for="role">Ticket Type:</label>
+                <select  id="role" name="role" class="form-control" required>
+                    <option selected required disabled>Select Ticket Type</option>
+                    <option value="Student">Adult</option>
+                    <option value="Adult">Senior</option>
+                    <option value="Other">Student</option>
+                </select>
+
+    <label for="name">Name:</label>
+     <input type="text" name="name" class="form-control" id="name"  placeholder="Enter your  name" required>
+
+   <label for="address">Email Address:</label>
+     <input type="email" name="address" class="form-control" id="address"  placeholder="Enter your email address" required>
+
+   <label for="name">Phone Number:</label>
+     <input type="text" name="phone" class="form-control" id="phone"  placeholder="Enter your phone number" required>
+
+    <!-- <label for="no_ticket">No of Seat:</label>
+     <input type="number" onKeyUp="checkInput()" name="no_ticket" class="form-control" id="no_ticket"  placeholder="Enter your  quantity, Max is 5" max='5' min='1' required> -->
+
+     <label for="no_ticket">No Of Seat:</label>
+                <select onchange="myFunction()" id="no_ticket" name="no_ticket" class="form-control" required>
+                    <option selected required disabled>Select No Of Seat</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+
+        
+    <input type="hidden" name="movie" value="{{ movie }}">
+    <label for="name">Grand Total:</label>
+    <p>$<span id="grandTotal"></span></p>
+    <!-- <input type="hidden" name="{{ movie.price }}"> -->
+     <!-- <script src="https://js.paystack.co/v1/inline.js"></script> -->
+     <!-- <button class="btn btn-secondary m-2 mx-auto" id="Purchase" data-toggle="modal" data-target="#exampleModal" >
+        <span><i class="las la-dollar-sign"></i></span>Purchase
+    </button> -->
+    <br>
+    <a class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">Purchase</a>
+
+
+
+    <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">payments card detail</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="credit-card">
+                <!-- <div class="form-header">
+                  <h4 class="title">Credit card detail</h4>
+                </div> -->
+               
+                <div class="form-body">
+                  <!-- Card Number -->
+                  <input type="text" class="card-number form-control" placeholder="Card Number" maxlength="20" required>
+               
+                  <!-- Date Field -->
+                  <div class="date-field">
+                    <div class="month">
+                      <select name="Month" required>
+                        <option selected disabled>Select Month</option>
+                        <option value="january">January</option>
+                        <option value="february">February</option>
+                        <option value="march">March</option>
+                        <option value="april">April</option>
+                        <option value="may">May</option>
+                        <option value="june">June</option>
+                        <option value="july">July</option>
+                        <option value="august">August</option>
+                        <option value="september">September</option>
+                        <option value="october">October</option>
+                        <option value="november">November</option>
+                        <option value="december">December</option>
+                      </select>
+                    </div>
+                    <div class="year">
+                      <select name="Year" required>
+                        <option selected disabled>Select Year</option>
+                        <option value="2016">2016</option>
+                        <option value="2017">2017</option>
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                      </select>
+                    </div>
+                  </div>
+               
+                  <!-- Card Verification Field -->
+                  <div class="card-verification">
+                    <div class="cvv-input">
+                      <input type="text" class="form-control" required placeholder="CVV" maxlength="3">
+                    </div>
+                    <div class="cvv-details">
+                      <p>3 digits usually found <br> on the signature strip</p>
+                    </div>
+                  </div>
+               
+                  <!-- Buttons -->
+                  <button type="submit" class="proceed-btn"><a href="#" id="Proceed">Pay</a></button>
+                  <!-- <button type="submit" class="paypal-btn"><a href="#">Pay With</a></button> -->
+                </div>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</form>
+  </div>
+        
+        </div>
+    </div>
+</div>
+
+
+
+<br>
+
+<script>
+    function myFunction() {
+        let grandTotal = document.getElementById('grandTotal');
+    let no_ticket = document.getElementById('no_ticket').value;
+    let price = '{{movie.price}}'
+    console.log(price)
+    console.log(no_ticket)
+    let b = parseInt(price) * no_ticket;
+    grandTotal.textContent = b;
+}
+    
+</script>
+
+<!-- <script>
+
+
+  const getCookie = (name) => {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      
+  function payWithPayStack(){
+      let plan = "";
+      let role = document.getElementById('role').value;
+      let phone = document.getElementById('phone').value;
+      let name = document.getElementById('name').value;
+      let email = document.getElementById('address').value;
+      let no_ticket = document.getElementById('no_ticket').value;
+      let redirect_url = "{% url 'order_complete' %}";
+      let currency = "NGN";
+      let movie="{{ movie.name }}";
+      let p = "{{movie.price}}" * no_ticket;
+      let amount = p * 100;
+      let ref = Math.floor((Math.random() * 1000000000000000) + 1 );
+      let obj = {
+          key: "",
+          email: email,
+          amount: amount,
+          ref: ref,
+          callback: function(response){
+              $.ajax({
+                  type: 'POST',
+                  url: "/payments/",
+                  data: {
+                      'csrfmiddlewaretoken': csrftoken,
+                      'role':role,
+                      'phone':phone,
+                      'name':name,
+                      'email':email,
+                      'amount': amount,
+                      'no_ticket':no_ticket,
+                      'ref': ref,
+                      'movie':movie,
+                  },
+                  success: function(response){
+                      console.log(response);
+                      // location.reload();
+                      window.location.href = redirect_url + '?movie='+movie+'&ref='+ref;
+                    
+
+                  },
+                  error: function(error){
+                      console.log(error);
+                      
+                  }
+              })
+          }
+      }
+      if (Boolean(currency)){
+          obj.currency = currency.toUpperCase()
+      }
+      if (Boolean(plan)){
+          obj.plan - plan;
+      }
+      var handler = PaystackPop.setup(obj);
+      handler.openIframe();
+  }
+</script> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+
+<script>
+  $('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+</script>
+
+{% endblock %}

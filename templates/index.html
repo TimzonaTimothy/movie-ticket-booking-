@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+<center>
+  <h2 id="welcome">Book Your Movie Today</h2>
+</center>
+<br>
+<div class="container">
+    <div class="card-group">
+      <div class="row ">
+        {% for p in products %}
+        <div class="col-md-6">
+          <div class="card" >
+            <img src="{{ p.img.url }}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{p.name}}</h5>
+              <p class="card-text">{{p.dis}}</p>
+              <p class="card-text">Show Time: <span>{{p.time}}</span></p>
+              <p><h2>Price: </span>${{p.price}}</span></p>
+              <form method="get" action=" {% url 'buy' p.id %} ">
+
+              <button type="submit" class="btn btn-primary mb-3">Book</button>
+            </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var ass = document.getElementById("welcome")
+    
+  welcome.style.color = 'red'
+  
+  function getRandomColor(){
+      var letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      var color = "#";
+      for (var i = 0; i < 6; i++){
+          color += letters[Math.floor(Math.random()*16)];
+      }
+      return color
+  }
+  
+  function changeHeader(){
+      colorInput = getRandomColor()
+      welcome.style.color = colorInput;
+      ass.style.color = colorInput;
+  }
+  
+  setInterval("changeHeader()",500);
+  
+  </script>
+{% endblock %}
+
+
+
+
