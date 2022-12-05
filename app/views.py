@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from  . models import Movie,seller,buyer
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import datetime
+from django.db.models import Q
 import secrets
 
 # Create your views here.
@@ -8,6 +10,16 @@ def index(request):
     pro = Movie.objects.all()
     slr = seller.objects.all()
     return render(request,'index.html',{'products':pro,'seller':slr})
+
+
+def search(request):
+    if 'q' in request.GET:
+        keyword = request.GET['q']
+        if keyword:
+            movies = Movie.objects.order_by('-time').filter(Q(name__icontains=keyword))
+    return render(request,'search.html', {'movies':movies})
+
+
 
 def buy(request,pk):
     print(pk)
@@ -62,7 +74,7 @@ def payments(request):
 
 def order_complete(request,):
     ref = request.GET.get('ref')
-    return render(request, 'order_complete.html', context)
+    return render(request, 'order_complete.html', context={})
 
 
 def pdf(request):

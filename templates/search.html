@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<br><br>
+{% if movies %}
+<center>
+<section style=";align-items: center;" class="blog-area section-padding-100-0">
+      
+    <div class="container" style="align-items: center;justify-content: center;text-align: center;">
+        <div  class="">{% for movie in movies %}
+            <!-- Single Blog Post -->
+            <div  class="">
+                <div class="single-blog-area wow fadeInUp" data-wow-delay="0.2s">
+                    <!-- Post Thumbnail -->
+                    <div class="blog_thumbnail">
+                        <img src="{{ movie.img.url }}" class="card-img-top" alt="">
+                    </div>
+                    <br>
+                    <!-- Post Content -->
+                    <div class="blog-content">
+                        
+                        <div class="post-meta">
+                            <h2>Name <a href="{% url 'buy' movie.id %}" class="post-author">{{movie.name}}</a> </h2>
+                        </div>
+                        
+                        <p>Show Time: <span>{{movie.time}}</p>
+                        <h4><a href="{% url 'buy' movie.id %}"  style="background-color: #1AA7EC;color: white;font-family: Roboto;" class="btn btn-success">Book</a></h4>
+                    </div>
+                </div>
+            </div>
+
+    
+        </div>
+
+    </div>
+  </section>
+</center>
+{% endfor %}
+  
+  <div class="row">
+    <div class="col-md-12">
+      {% if page_obj.has_other_pages %}
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a href="?page={{page_obj.previous_page_number}}" class="page-link">&laquo;</a>
+        </li>
+        {% else %}
+          <li class="page_item disabled">
+            <a class="page-link">&laquo;</a>
+          </li>
+        {% endif %}
+        {% for i in page_obj.paginator.page_range %}
+          {% if page_obj.number == i %}
+            <li class="page-item active">
+              <a class="page-link">{{i}}</a>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a href="?page={{i}}" class="page-link">{{i}}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a href="?page={{page_obj.next_page_number}}" class="page-link">&raquo;</a>
+        </li>
+        {% else %}
+          <li class="page_item disabled">
+            <a class="page-link">&raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+      {% endif %}
+    </div>
+  </div> <br><br><br>
+{% else %}
+<br><br>
+  <center>
+  <div class="container">
+    <h4 style="color: red;">Could'nt find any movie for you.</h3>
+        <p style="color: white;">Make sure you typed your tracking number correct</p>
+  </div>
+  </center>
+{% endif %}
+<br>
+{% endblock %}

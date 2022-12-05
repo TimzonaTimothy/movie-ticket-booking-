@@ -7,6 +7,18 @@
 </center>
 <br>
 <div class="container">
+  <form class="form-group" method="get" action="{% url 'search' %}">
+  <fieldset>
+    <input type="search" class="form-control" name="q" value="{{ request.GET.q }}" id="search" style="background-color: white;color: black;border-color;font-size: larger;" placeholder="Search..." required>
+    <br>
+  <button type="submit" style="background-color: #1AA7EC;color: white;font-family: Roboto;" class="btn btn-success">Search</button>
+  </fieldset>
+  
+</form>
+</div>
+
+<br>
+<div class="container">
     <div class="card-group">
       <div class="row ">
         {% for p in products %}
